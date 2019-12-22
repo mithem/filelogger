@@ -1,0 +1,25 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "2fe094a623ca0a5645a9721c373d91d4aa6dc67ba7b5097f7eec3f75e0db910e"
+        },
+        "pipfile-spec": 6,
+        "requires": {
+            "python_version": "3.7"
+        },
+        "sources": [
+            {
+                "name": "pypi",
+                "url": "https://pypi.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {
+        "fileloghelper": {
+            "editable": true,
+            "path": "."
+        }
+    },
+    "develop": {}
+}

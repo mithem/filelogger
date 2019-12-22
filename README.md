@@ -2,6 +2,12 @@
 
 A simple helper for logging content to files (and displaying it)
 
+## Installation
+
+```bash
+pip3 install fileloghelper
+```
+
 ## Methods
 
 - set_context(context): specifies context which will be added to all outputs (file & terminal) in front

@@ -1,14 +1,20 @@
 Metadata-Version: 2.1
 Name: fileloghelper
-Version: 0.0.1
+Version: 0.0.3
 Summary: Helper for logging to files
 Home-page: https://github.com/mithem/filelog
 Author: mithem
 Author-email: miguel.themann@gmail.com
 License: UNKNOWN
-Description: # filelog
+Description: # fileloghelper
         
         A simple helper for logging content to files (and displaying it)
+        
+        ## Installation
+        
+        ```bash
+        pip3 install fileloghelper
+        ```
         
         ## Methods
         
@@ -23,7 +29,7 @@ Description: # filelog
         ### Example
         
         ```python
-        from filelog import Logger
+        from fileloghelper import Logger
         
         logger = Logger(filename='log.txt', context='MyLogger')
         
