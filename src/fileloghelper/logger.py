@@ -23,7 +23,10 @@ class Logger:
 
     def set_context(self, context):
         if not "[" in context and not "] " in context:
-            self._context = f"[{context}] "
+            if (context == "" or context == " "):
+                self._context = ""
+            else:
+                self._context = f"[{context}] "
         else:
             self._context = context
 
@@ -100,3 +103,6 @@ class Logger:
         string += "\n"
         self.lines.append(string)
 
+    def clear(self):
+        """Clear all lines"""
+        self.lines = []

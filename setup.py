@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="fileloghelper",
-    version="0.0.3",
+    version="0.0.4",
     author="mithem",
     author_email="miguel.themann@gmail.com",
     description="Helper for logging to files",
