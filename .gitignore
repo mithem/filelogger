@@ -1,5 +1,6 @@
 __pycache__
-Pipfile
-Pipfile.lock
 dist
 build
+src/fileloghelper.egg-info
+Pipfile
+Pipfile.lock
