@@ -4,3 +4,4 @@ build
 src/fileloghelper.egg-info
 Pipfile
 Pipfile.lock
+log.txt

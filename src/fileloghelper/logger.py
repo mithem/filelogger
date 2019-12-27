@@ -48,28 +48,30 @@ class Logger:
         if display:
             print(col.OKGREEN + self._context + self.timestamp_now() +
                   col.ENDC + " " + text)
-        string = self._context + self.timestamp_now() + " " + text
+        string = "[SUCCESS] " + self._context + \
+            self.timestamp_now() + " " + text
         return string
 
     def get_debug(self, text, display=False):
         if display:
             print(col.OKBLUE + self._context + self.timestamp_now() +
                   col.ENDC + " " + text)
-        string = self._context + self.timestamp_now() + " " + text
+        string = "[DEBUG] " + self._context + self.timestamp_now() + " " + text
         return string
 
     def get_warning(self, text, display=False):
         if display:
             print(col.WARNING + self._context + self.timestamp_now() +
                   col.ENDC + " " + text)
-        string = self._context + self.timestamp_now() + " " + text
+        string = "[WARNING] " + self._context + \
+            self.timestamp_now() + " " + text
         return string
 
     def get_error(self, text, display=True):
         if display:
             print(col.FAIL + self._context + self.timestamp_now() +
                   col.ENDC + " " + text)
-        string = self._context + self.timestamp_now() + " " + text
+        string = "[ERROR] " + self._context + self.timestamp_now() + " " + text
         return string
 
     def get_plain(self, text, display=True, extra_long=False):
