@@ -82,28 +82,28 @@ class Logger:
         return string
 
     def success(self, text, display=True):
-        string = self.get_success(text, display)
+        string = self.get_success(str(text), display)
         string += "\n"
         self.lines.append(string)
 
     def debug(self, text, display=False):
-        string = self.get_debug(text, display)
+        string = self.get_debug(str(text), display)
         string += "\n"
         self.lines.append(string)
 
     def warning(self, text, display=False):
-        string = self.get_warning(text, display)
+        string = self.get_warning(str(text), display)
         string += "\n"
         self.lines.append(string)
 
     def error(self, text, display=True):
-        string = self.get_error(text, display)
+        string = self.get_error(str(text), display)
         string += "\n"
         self.lines.append(string)
 
     def plain(self, text, display=False, extra_long=False, very_plain=False):
         if not very_plain:
-            string = self.get_plain(text, display, extra_long)
+            string = self.get_plain(str(text), display, extra_long)
         else:
             string = text
             if display:
