@@ -5,3 +5,4 @@ src/fileloghelper.egg-info
 Pipfile
 Pipfile.lock
 log.txt
+test.py
