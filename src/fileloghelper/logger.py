@@ -1,5 +1,6 @@
 import os
 import datetime
+import platform
 
 
 class col:
@@ -100,10 +101,97 @@ class Logger:
         string += "\n"
         self.lines.append(string)
 
-    def plain(self, text, display=False, extra_long=False):
-        string = self.get_plain(text, display, extra_long)
+    def plain(self, text, display=False, extra_long=False, very_plain=False):
+        if not very_plain:
+            string = self.get_plain(text, display, extra_long)
+        else:
+            string = text
+            if display:
+                print(string)
         string += "\n"
         self.lines.append(string)
+
+    def header(self, sys_stat=False, date=False, description="", display=0):
+        """
+        Everything is logged, but there are a few options to choose what to display:
+
+        0 (standard): nothing, only log
+
+        1: only description
+
+        2: only date
+
+        3: only sys_stat
+
+        4: description & date
+
+        5: description & sys_stat
+
+        6: date & sys_stat
+
+        7: all
+        """
+        # yes, this is kinda awfull, but it does the job reliably
+        now = datetime.datetime.now()
+
+        systemstrin = f"OS:\n{platform.system()} ({platform.machine()})\n{platform.version()}\n{platform.platform()}\n{platform.processor()}\n"
+        date_string = f"{now.strftime('%A, %d %B %Y %H:%M:%S')}\n"
+        if display == 0:
+            if sys_stat:
+                self.plain(systemstrin, very_plain=True, display=False)
+            if date:
+                self.plain(date_string, very_plain=True, display=False)
+            if description:
+                self.plain(description, very_plain=True, display=False)
+        elif display == 1:
+            if sys_stat:
+                self.plain(systemstrin, very_plain=True, display=False)
+            if date:
+                self.plain(date_string, very_plain=True, display=False)
+            if description:
+                self.plain(description, very_plain=True, display=True)
+        elif display == 2:
+            if sys_stat:
+                self.plain(systemstrin, very_plain=True, display=False)
+            if date:
+                self.plain(date_string, very_plain=True, display=True)
+            if description:
+                self.plain(description, very_plain=True, display=False)
+        elif display == 3:
+            if sys_stat:
+                self.plain(systemstrin, very_plain=True, display=True)
+            if date:
+                self.plain(date_string, very_plain=True, display=False)
+            if description:
+                self.plain(description, very_plain=True, display=False)
+        elif display == 4:
+            if sys_stat:
+                self.plain(systemstrin, very_plain=True, display=False)
+            if date:
+                self.plain(date_string, very_plain=True, display=True)
+            if description:
+                self.plain(description, very_plain=True, display=True)
+        elif display == 5:
+            if sys_stat:
+                self.plain(systemstrin, very_plain=True, display=True)
+            if date:
+                self.plain(date_string, very_plain=True, display=False)
+            if description:
+                self.plain(description, very_plain=True, display=True)
+        elif display == 6:
+            if sys_stat:
+                self.plain(systemstrin, very_plain=True, display=True)
+            if date:
+                self.plain(date_string, very_plain=True, display=True)
+            if description:
+                self.plain(description, very_plain=True, display=False)
+        elif display == 7:
+            if sys_stat:
+                self.plain(systemstrin, very_plain=True, display=True)
+            if date:
+                self.plain(date_string, very_plain=True, display=True)
+            if description:
+                self.plain(description, very_plain=True, display=True)
 
     def clear(self):
         """Clear all lines"""
