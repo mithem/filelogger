@@ -13,6 +13,7 @@ pip3 install fileloghelper
 ### set_context(context)
 
 Specifies context which will be added to all outputs (file & terminal) in front
+
 |parameter|description|
 |:---:|---|
 |context: str | string to be added to output of other functions|
@@ -20,6 +21,7 @@ Specifies context which will be added to all outputs (file & terminal) in front
 ### set_verbose(verbose)
 
 Sets verbose mode for whole logger. If true, a info whether the text is success/debug/warning/error information will be added to the file
+
 |parameter|description|
 |:---:|---|
 |verbose: bool | value to set for verbose mode |
@@ -35,6 +37,7 @@ Clear the log. **Note**: You have to save again to make changes to the actual fi
 ### success(text, display=True)
 
 Writes log to file. If verbose mode active, '[SUCCESS]' will be written in addition.
+
 |parameter|description|
 |:---:|---|
 |display: bool| print text on console|
@@ -42,6 +45,7 @@ Writes log to file. If verbose mode active, '[SUCCESS]' will be written in addit
 ### debug(text, display=True)
 
 Writes log to file. If verbose mode active, '[DEBUG]' will be written in addition.
+
 |parameter|description|
 |:---:|---|
 |display: bool| print text on console|
@@ -49,6 +53,7 @@ Writes log to file. If verbose mode active, '[DEBUG]' will be written in additio
 ### warning(text, display=True, extra_context="")
 
 Writes log to file. If verbose mode active, [{extra_context}] will be written in addition. extra_context can be used to give extra information about the warning.
+
 |parameter|description|
 |:---:|---|
 |display: bool| print text on console|
@@ -56,6 +61,7 @@ Writes log to file. If verbose mode active, [{extra_context}] will be written in
 ### error(text, display=True, extra_context="")
 
 Writes log to file. If verbose mode active, [{extra_context}] will be written in addition. extra_context can be used to give extra information about the error.
+
 |parameter|description|
 |:---:|---|
 |display: bool| print text on console|
@@ -79,6 +85,7 @@ Automatically categorizes exception to invoke show_warning() or show_error()
 ### header(sys_stat=False, date=False, description="", display=0)
 
 Use plain() to output certain information:
+
 |parameter|description|
 |:---:|---|
 |sys_stat|write system information to the log|
@@ -87,6 +94,7 @@ Use plain() to output certain information:
 |display|also display certain information in the console (see table below)|
 
 **Modes for display:**
+
 |mode number|information printed|
 |:---:|---|
 |0 (standard) | none
