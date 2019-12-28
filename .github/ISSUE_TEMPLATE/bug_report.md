@@ -17,4 +17,4 @@ Link source code to reproduce internal behavior and log
 A clear and concise description of what you expected to happen.
 
 **Logs**
-Please link the log file to make investigation easier
+Link the log file to make investigation easier
