@@ -1,11 +1,14 @@
 import setuptools
+from src.fileloghelper import _VERSION
+
+print(_VERSION)
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="fileloghelper",
-    version="1.0.0",
+    version=_VERSION,
     author="mithem",
     author_email="miguel.themann@gmail.com",
     description="Helper for logging to files",

@@ -2,6 +2,8 @@ import os
 import datetime
 import platform
 
+_VERSION = "1.1.0"
+
 
 class col:
     HEADER = '\033[95m'
@@ -55,6 +57,12 @@ class Logger:
         self.file = open(self.filename, "w")
         self.file.writelines(self.lines)
         self.file.close()
+
+    def get_version(self, long=False) -> str:
+        if long:
+            return f"This is fileloghelper on v{_VERSION}!"
+        else:
+            return _VERSION
 
     def _timestamp_now_(self, extra_long=False):
         now = datetime.datetime.now()
@@ -155,7 +163,7 @@ class Logger:
         string += "\n"
         self.lines.append(string)
 
-    def header(self, sys_stat=False, date=False, description="", display=0):
+    def header(self, sys_stat=False, date=False, description="", display=0, version=True):
         """
         Display options:
 
@@ -173,11 +181,12 @@ class Logger:
 
         6: date & sys_stat
 
-        7: all
+        7: description, date and sys_stat
+
+        If 'version', also the version will be displayed
         """
         # yes, this is kinda awfull, but it does the job reliably
         now = datetime.datetime.now()
-
         systemstrin = f"{platform.system()} ({platform.machine()})\n{platform.version()}\n{platform.platform()}\n{platform.processor()}\n"
         date_string = f"{now.strftime('%A, %d %B %Y %H:%M:%S')}\n"
         if display == 0:
@@ -236,6 +245,8 @@ class Logger:
                 self.plain(date_string, very_plain=True, display=True)
             if description:
                 self.plain(description, very_plain=True, display=True)
+        self.plain(self.get_version(long=True),
+                   very_plain=True, display=version)
 
     def clear(self):
         """Clear all lines"""
