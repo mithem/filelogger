@@ -33,6 +33,7 @@ class Logger:
         self.lines = []
         self.set_context(context)
         self.verbose = self.set_verbose(verbose)
+        self._progress: Progress = None
 
     def set_context(self, context):
         """specifies context which will be added to all outputs (file & terminal) in front"""
@@ -251,3 +252,52 @@ class Logger:
     def clear(self):
         """Clear all lines"""
         self.lines = []
+
+    def progress(self, description, x=0, startx=0, maxx=100, mode="=", scale=10):
+        """show a progress bar. depending on x"""
+        if not self._progress == None:
+            self._progress.update(x)
+        else:
+            self._progress = Progress(
+                description=description, startx=startx, maxx=maxx, mode=mode, scale=scale)
+
+
+class Progress:
+    def __init__(self, description, startx, maxx, mode, scale):
+        self.x = startx
+        self.description = description
+        self.maxx = maxx
+        self.decimal = round(startx / maxx, 2)
+        self.mode = mode
+        self.scale = scale
+        self.update(startx)
+
+    def update(self, x):
+        self.x = x
+        self.decimal = round(x / self.maxx, 2)
+        self._backline()
+        print(self._get_str(), end="", flush=True)
+        if self.decimal == 1.0:
+            print()
+
+    def _get_str(self):
+        if self.mode == "#":
+            return self.description + ": " + self._percent() + self._hashtag()
+        else:
+            return self.description + ": " + self._percent() + self._equal_sign()
+
+    def _hashtag(self):
+        inner = "#" * int(self.decimal * self.scale) + " " * \
+            int((1 - self.decimal) * self.scale)
+        return "<" + inner + ">"
+
+    def _equal_sign(self):
+        inner = "=" * int(self.decimal * self.scale - 1) + ">" + " " * \
+            int((1 - self.decimal) * self.scale)
+        return "[" + inner + "]"
+
+    def _backline(self):
+        print("\r", end="")
+
+    def _percent(self):
+        return str(round(self.decimal * 100, 2)) + "% "
