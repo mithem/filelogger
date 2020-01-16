@@ -2,7 +2,7 @@ import os
 import datetime
 import platform
 
-_VERSION = "1.1.0"
+_VERSION = "1.2.0"
 
 
 class col:
@@ -253,8 +253,8 @@ class Logger:
         """Clear all lines"""
         self.lines = []
 
-    def progress(self, description, x=0, startx=0, maxx=100, mode="=", scale=10):
-        """show a progress bar. depending on x"""
+    def progress(self, x=0, description="", startx=0, maxx=100, mode="=", scale=10):
+        """Show a progress bar. depending on x"""
         if not self._progress == None:
             self._progress.update(x)
         else:
