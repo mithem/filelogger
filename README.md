@@ -8,7 +8,21 @@ A simple helper for logging content to files (and displaying it)
 pip3 install fileloghelper
 ```
 
-## Methods
+## class Logger
+
+Used to log content to file and print output to the console
+
+### **init**(filename='log.txt', context='', verbose=True)
+
+Logger will be configured to be saved to 'filename' if self.save() is called. 'context' is used to configure the behavior of logging/printing (see set_context()). If 'verbose', it will write extra information about the statement in the log file. If an error/warning is handled via show_error()/show_warning()/handle_exception(), it will write it's type in the same place.
+
+```python
+verbose = False
+>>> [context] [12:34:56] Hello World!
+verbose = True
+>>> [DEBUG] [context] [12:34:56] Hello World!
+>>> [NotImplementedError] [context] [12:34:56] Hello World!
+```
 
 ### set_context(context)
 
@@ -132,7 +146,7 @@ logger.progress(80)
 Running 'Self-Destruction': 80.0% [=======> ]
 ```
 
-## Example
+### Logger - Example
 
 ```python
 from fileloghelper import Logger
@@ -146,4 +160,88 @@ logger.success('Successfull!', display=True)
 logger.handle_exception(NotImplementedError("off to work!"))
 
 logger.save()
+```
+
+## class VariableObserver
+
+Wrapper for variable with functions pre/post changing the variables's value and (for int and float) a history (a list, e.g. to plot with matplotlib)
+
+### **init**(value, pre_chance_func=lambda x: x, post_change_func=lambda x: x)
+
+|    parameter     | description                                    |
+| :--------------: | ---------------------------------------------- |
+|      value       | starting value of the variable                 |
+| pre_change_func  | function called before the variable is changed |
+| post_change_func | function called after the variable is changed  |
+
+**Note:** pre/post-change functions will be called with the value of the (main) variable. They will have to accept 1 positional argument.
+
+### set_value(new_value)
+
+If new_value is different from the previous variable, it will trigger pre/post-change functions and change the value of the variable.
+
+### get_history()
+
+If the type of the (main) variable is int or float, it has created a list of past values which can be get by calling this method
+
+### VariableObserver - Example
+
+```python
+from fileloghelper import VariableObserver
+
+def print_value(x):
+    print("Current value:", x)
+
+vo = VariableObserver(0, print_value, print_value)
+for i in range(3):
+    vo.set_value(i)
+```
+
+```none
+Current value: 0 [pre-change]
+Current value: 1 [post-change]
+Current value: 1 [pre]
+Current value: 2 [post]
+```
+
+```python
+vo.get_history()
+```
+
+```none
+[0, 1, 2]
+```
+
+## class VarSet
+
+A set/collection of VariableObserver to make it easer to print larger streams of data to the console.
+
+### **init**(variables: dict[str, value])
+
+### print_variables()
+
+Prints values of all variables in set to the console while overwriting old ones
+
+### VarSet - Example
+
+```python
+from fileloghelper import VarSet
+from time import sleep
+
+myvars = {
+    "x": 0,
+    "y": 0
+}
+vs = VarSet(myvars)
+for i in range(11):
+    vs.variables.get("x").set_value(i)
+    vs.variables.get("y").set_value(i * 2)
+    vs.print_variables()
+    sleep(0.5)
+```
+
+final output:
+
+```none
+10, 20
 ```

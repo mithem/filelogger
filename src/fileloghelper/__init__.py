@@ -1,8 +1,7 @@
-import os
 import datetime
 import platform
 
-_VERSION = "1.2.0"
+_VERSION = "1.3.0"
 
 
 class col:
@@ -21,7 +20,7 @@ class Logger:
 
     def __init__(self, filename="log.txt", context="", verbose=True):
         """
-        Example for a log in file filename (verbose == False):
+        Example for a log in file 'filename' (verbose == False):
 
         [context] [12:34:56] Hello World!
 
@@ -148,6 +147,7 @@ class Logger:
                    extra_context=type(error).__name__)
 
     def handle_exception(self, exception):
+        """pass any subclass/instance of 'Exception' and this will handle printing it appropriately formatted"""
         if issubclass(exception.__class__, Warning):
             self.show_warning(exception)
         else:
@@ -263,6 +263,8 @@ class Logger:
 
 
 class Progress:
+    """internal class"""
+
     def __init__(self, description, startx, maxx, mode, scale):
         self.x = startx
         self.description = description
@@ -301,3 +303,62 @@ class Progress:
 
     def _percent(self):
         return str(round(self.decimal * 100, 2)) + "% "
+
+
+class VariableObserver:
+    """Wrapper for variable with functions pre/post changing the variables's value and (for int and float) a history (a list, e.g. to plot with matplotlib)"""
+
+    def __init__(self, value, pre_change_func=lambda x: x, post_change_func=lambda x: x):
+        self.value = value
+        self.pre_change_func = pre_change_func
+        self.post_change_func = post_change_func
+        if type(value) == int or type(value) == float:
+            self._history = [self.value]
+        else:
+            self._history = None
+
+    def set_value(self, new_value):
+        if self.value != new_value:
+            self.pre_change_func(self.value)
+            self.value = new_value
+            if self._history != None:
+                self._history.append(new_value)
+            self.post_change_func(self.value)
+
+    def get_history(self):
+        return self._history
+
+    def __nonzero__(self):
+        return self.value.__nonzero__()
+
+    def __repr__(self):
+        return self.value.__repr__()
+
+    def __bool__(self):
+        return self.value.__bool__()
+
+
+class VarSet:
+    """A set/collection of VariableObservers to make it easier to print larger streams of data to the console"""
+
+    def __init__(self, variables: dict):
+        self.variables: dict[str, VariableObserver] = {}
+        for name in variables:
+            self.variables[name] = VariableObserver(variables[name])
+
+    def print_variables(self):
+        out = ""
+        for key in self.variables:
+            out += str(self.variables[key].value) + ", "
+        out = out[:-2]
+        print("\r", end="")
+        print(out, end="", flush=True)
+
+    def __nonzero__(self):
+        return self.variables
+
+    def __bool__(self):
+        return len(self.variables) > 0
+
+    def __repr__(self):
+        return self.variables
