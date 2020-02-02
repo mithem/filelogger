@@ -2,7 +2,7 @@ import datetime
 import platform
 import sys
 
-_VERSION = "1.4.0"
+_VERSION = "1.4.1"
 
 
 class col:
@@ -158,7 +158,8 @@ class Logger:
                      extra_context=type(warning).__name__)
 
     def show_error(self, error, display=True):
-        self.error(f"(line {sys.exc_info()[2].tb_lineno}) {str(error)}", display,
+        tb = sys.exc_info()[2]
+        self.error(f"({tb.tb_frame.f_code.co_filename}, line {tb.tb_lineno}) {str(error)}", display,
                    extra_context=type(error).__name__)
 
     def handle_exception(self, exception):
