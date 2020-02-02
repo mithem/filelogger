@@ -1,7 +1,8 @@
 import datetime
 import platform
+import sys
 
-_VERSION = "1.3.0"
+_VERSION = "1.4.0"
 
 
 class col:
@@ -18,7 +19,7 @@ class col:
 class Logger:
     """A class for logging data to a file"""
 
-    def __init__(self, filename="log.txt", context="", verbose=True):
+    def __init__(self, filename="log.txt", context="", verbose=True, autosave=False):
         """
         Example for a log in file 'filename' (verbose == False):
 
@@ -28,10 +29,11 @@ class Logger:
 
         [DEBUG] [context] [12:34:56] Hello World!
         """
+        self.autosave = autosave
         self.filename = filename
-        self.lines = []
+        self._lines = []
         self.set_context(context)
-        self.verbose = self.set_verbose(verbose)
+        self.set_verbose(verbose)
         self._progress: Progress = None
 
     def set_context(self, context):
@@ -47,6 +49,10 @@ class Logger:
     def set_verbose(self, verbose):
         if type(verbose) == bool:
             self._verbose = verbose
+            if verbose:
+                self.debug("Fileloghelper now in verbose mode")
+            else:
+                self.debug("Fileloghelper no longer in verbose mode")
         else:
             e = TypeError("verbose is of type bool")
             self.show_error(e)
@@ -55,10 +61,15 @@ class Logger:
     def save(self):
         """save file under default/at declaration specified filename"""
         self.file = open(self.filename, "w")
-        self.file.writelines(self.lines)
+        self.file.writelines(self._lines)
         self.file.close()
 
-    def get_version(self, long=False) -> str:
+    def _autosave(self):
+        """Automatically saves log if autosave mode is on"""
+        if self.autosave:
+            self.save()
+
+    def get_version(self, long=False):
         if long:
             return f"This is fileloghelper on v{_VERSION}!"
         else:
@@ -117,33 +128,37 @@ class Logger:
     def success(self, text, display=True):
         string = self._get_success_(str(text), display)
         string += "\n"
-        self.lines.append(string)
+        self._lines.append(string)
+        self._autosave()
 
     def debug(self, text, display=False):
         string = self._get_debug_(str(text), display)
         string += "\n"
-        self.lines.append(string)
+        self._lines.append(string)
+        self._autosave()
 
     def warning(self, text, display=True, extra_context=""):
         """writes text to file and optionally with yellow indication in console(if display == True)"""
         string = self._get_warning_(
             str(text), display, extra_context)
         string += "\n"
-        self.lines.append(string)
+        self._lines.append(string)
+        self._autosave()
 
     def error(self, text, display=True, extra_context=""):
         """writes text to file and optionally with red indication in console (if display==True)"""
         string = self._get_error_(
             str(text), display, extra_context)
         string += "\n"
-        self.lines.append(string)
+        self._lines.append(string)
+        self._autosave()
 
     def show_warning(self, warning, display=True):
-        self.warning(str(warning), display,
+        self.warning(f"(line {sys.exc_info()[2].tb_lineno}) {str(warning)}", display,
                      extra_context=type(warning).__name__)
 
     def show_error(self, error, display=True):
-        self.error(str(error), display,
+        self.error(f"(line {sys.exc_info()[2].tb_lineno}) {str(error)}", display,
                    extra_context=type(error).__name__)
 
     def handle_exception(self, exception):
@@ -162,7 +177,8 @@ class Logger:
             if display:
                 print(string)
         string += "\n"
-        self.lines.append(string)
+        self._lines.append(string)
+        self._autosave()
 
     def header(self, sys_stat=False, date=False, description="", display=0, version=True):
         """
@@ -251,7 +267,8 @@ class Logger:
 
     def clear(self):
         """Clear all lines"""
-        self.lines = []
+        self._lines = []
+        self._autosave()
 
     def progress(self, x=0, description="", startx=0, maxx=100, mode="=", scale=10):
         """Show a progress bar. depending on x"""
@@ -260,6 +277,13 @@ class Logger:
         else:
             self._progress = Progress(
                 description=description, startx=startx, maxx=maxx, mode=mode, scale=scale)
+        self._autosave()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, tb):
+        self.save()
 
 
 class Progress:
