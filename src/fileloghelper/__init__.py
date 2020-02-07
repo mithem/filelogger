@@ -2,7 +2,7 @@ import datetime
 import platform
 import sys
 
-_VERSION = "1.4.1"
+_VERSION = "1.4.2"
 
 
 class col:
@@ -201,6 +201,8 @@ class Logger:
 
         7: description, date and sys_stat
 
+        8: as 7, but with fileloghelper version
+
         If 'version', also the version will be displayed
         """
         # yes, this is kinda awfull, but it does the job reliably
@@ -263,8 +265,9 @@ class Logger:
                 self.plain(date_string, very_plain=True, display=True)
             if description:
                 self.plain(description, very_plain=True, display=True)
-        self.plain(self.get_version(long=True),
-                   very_plain=True, display=version)
+        if version:
+            self.plain(self.get_version(long=True),
+                       very_plain=True, display=display == 8)
 
     def clear(self):
         """Clear all lines"""
