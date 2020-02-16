@@ -2,7 +2,7 @@ import datetime
 import platform
 import sys
 
-_VERSION = "1.4.2"
+_VERSION = "1.4.3"
 
 
 class col:
@@ -373,6 +373,9 @@ class VarSet:
         self.variables: dict[str, VariableObserver] = {}
         for name in variables:
             self.variables[name] = VariableObserver(variables[name])
+
+    def set(self, varname, value):
+        self.variables[varname].set_value(value)
 
     def print_variables(self):
         out = ""
