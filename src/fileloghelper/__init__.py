@@ -2,7 +2,7 @@ import datetime
 import platform
 import sys
 
-_VERSION = "1.4.3"
+_VERSION = "1.4.4"
 
 
 class col:
@@ -275,13 +275,12 @@ class Logger:
         self._autosave()
 
     def progress(self, x=0, description="", startx=0, maxx=100, mode="=", scale=10):
-        """Show a progress bar. depending on x"""
+        """Show a progress bar. Depending on x"""
         if not self._progress == None:
             self._progress.update(x)
         else:
             self._progress = Progress(
-                description=description, startx=startx, maxx=maxx, mode=mode, scale=scale)
-        self._autosave()
+                description=description, startx=startx, maxx=maxx, mode=mode, scale=scale, logger=self)
 
     def __enter__(self):
         return self
@@ -293,7 +292,7 @@ class Logger:
 class Progress:
     """internal class"""
 
-    def __init__(self, description, startx, maxx, mode, scale):
+    def __init__(self, description: str, startx: int, maxx: int, mode: str, scale: int, logger: Logger):
         self.x = startx
         self.description = description
         self.maxx = maxx
@@ -301,20 +300,33 @@ class Progress:
         self.mode = mode
         self.scale = scale
         self.update(startx)
+        self.logger = logger
+        if description != "":
+            self.name = f"{description} "
+        else:
+            self.name = ""
+        self.logger.debug(f"progress {self.name}started")
 
     def update(self, x):
         self.x = x
-        self.decimal = round(x / self.maxx, 2)
+        self.decimal = round(x / self.maxx, 3)
         self._backline()
         print(self._get_str(), end="", flush=True)
         if self.decimal == 1.0:
+            self._backline()
+            print("\033[92m" + self._get_str() + "\033[0m", end="", flush=True)
             print()
+            self.logger.success(f"progress {self.name}finished", False)
 
     def _get_str(self):
-        if self.mode == "#":
-            return self.description + ": " + self._percent() + self._hashtag()
+        if self.description != "":
+            str_ = self.description + ": " + self._percent()
         else:
-            return self.description + ": " + self._percent() + self._equal_sign()
+            str_ = self._percent()
+        if self.mode == "#":
+            return str_ + self._hashtag()
+        else:
+            return str_ + self._equal_sign()
 
     def _hashtag(self):
         inner = "#" * int(self.decimal * self.scale) + " " * \
@@ -330,7 +342,7 @@ class Progress:
         print("\r", end="")
 
     def _percent(self):
-        return str(round(self.decimal * 100, 2)) + "% "
+        return str(round(self.decimal * 100, 3)) + "% "
 
 
 class VariableObserver:
