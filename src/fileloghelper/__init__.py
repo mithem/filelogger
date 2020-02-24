@@ -2,7 +2,7 @@ import datetime
 import platform
 import sys
 
-_VERSION = "1.4.4"
+_VERSION = "1.4.5"
 
 
 class col:
@@ -396,6 +396,12 @@ class VarSet:
         out = out[:-2]
         print("\r", end="")
         print(out, end="", flush=True)
+
+    def get_history(self):
+        histories = {}
+        for varname in self.variables:
+            histories[varname] = self.variables[varname].get_history()
+        return histories
 
     def __nonzero__(self):
         return self.variables
