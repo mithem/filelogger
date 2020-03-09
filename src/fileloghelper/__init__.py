@@ -2,7 +2,7 @@ import datetime
 import platform
 import sys
 
-_VERSION = "1.4.5"
+_VERSION = "1.5.0"
 
 
 class col:
@@ -33,7 +33,7 @@ class Logger:
         self.filename = filename
         self._lines = []
         self.set_context(context)
-        self.set_verbose(verbose)
+        self.set_verbose(verbose, False)
         self._progress: Progress = None
 
     def set_context(self, context):
@@ -46,15 +46,17 @@ class Logger:
         else:
             self._context = context
 
-    def set_verbose(self, verbose):
-        if type(verbose) == bool:
-            self._verbose = verbose
+    def set_verbose(self, set_verbose: bool, verbose=True):
+        """set verbose mode to 'set_verbose'. If 'verbose', also log the change."""
+        if type(set_verbose) == bool:
+            self._verbose = set_verbose
             if verbose:
-                self.debug("Fileloghelper now in verbose mode")
-            else:
-                self.debug("Fileloghelper no longer in verbose mode")
+                if set_verbose:
+                    self.debug("Fileloghelper now in verbose mode")
+                else:
+                    self.debug("Fileloghelper no longer in verbose mode")
         else:
-            e = TypeError("verbose is of type bool")
+            e = TypeError("'verbose' argument expected to be of type bool")
             self.show_error(e)
             raise e
 
@@ -154,7 +156,8 @@ class Logger:
         self._autosave()
 
     def show_warning(self, warning, display=True):
-        self.warning(f"(line {sys.exc_info()[2].tb_lineno}) {str(warning)}", display,
+        tb = sys.exc_info()[2]
+        self.warning(f"({tb.tb_frame.f_code.co_filename}, line {tb.tb_lineno}) {str(warning)}", display,
                      extra_context=type(warning).__name__)
 
     def show_error(self, error, display=True):
@@ -181,7 +184,8 @@ class Logger:
         self._lines.append(string)
         self._autosave()
 
-    def header(self, sys_stat=False, date=False, description="", display=0, version=True):
+    # TODO v1.6: remove version argument
+    def header(self, sys_stat=False, date=False, description="", display=0, fileloghelper_version=True, program_version=None, version=None):
         """
         Display options:
 
@@ -203,12 +207,17 @@ class Logger:
 
         8: as 7, but with fileloghelper version
 
-        If 'version', also the version will be displayed
+        9: as 7, but also prints program_version
+
+        If 'fileloghelper_version', also the version of fileloghelper will be displayed/logged
+        'program_version' can be specified to be displayed/logged as well
+
+        Note: 'version' is the same as 'fileloghelper_version' but is depreciated and will be removed in a future release (1.6)
         """
-        # yes, this is kinda awfull, but it does the job reliably
         now = datetime.datetime.now()
         systemstrin = f"{platform.system()} ({platform.machine()})\n{platform.version()}\n{platform.platform()}\n{platform.processor()}\n"
         date_string = f"{now.strftime('%A, %d %B %Y %H:%M:%S')}\n"
+        # yes, this is kinda awfull, but it does the job reliably
         if display == 0:
             if sys_stat:
                 self.plain(systemstrin, very_plain=True, display=False)
@@ -265,7 +274,21 @@ class Logger:
                 self.plain(date_string, very_plain=True, display=True)
             if description:
                 self.plain(description, very_plain=True, display=True)
-        if version:
+        if version != None:
+            fileloghelper_version = version
+            try:
+                raise DeprecationWarning(
+                    "fileloghelper.Logger().header()-argument 'version' is deprecated and will be removed in v1.6. Please use 'fileloghelper_version' instead.")
+            except DeprecationWarning as e:
+                self.handle_exception(e)
+        if program_version != None:
+            if type(program_version) == str or type(program_version) == int or type(program_version) == float:
+                self.plain("version: " + str(program_version),
+                           very_plain=True, display=display == 9)
+            else:
+                raise TypeError(
+                    "program_version not of type (str, int, float)")
+        if fileloghelper_version:
             self.plain(self.get_version(long=True),
                        very_plain=True, display=display == 8)
 
