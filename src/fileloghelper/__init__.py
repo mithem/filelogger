@@ -2,7 +2,7 @@ import datetime
 import platform
 import sys
 
-_VERSION = "1.6.0"
+_VERSION = "1.6.1"
 
 
 class col:
@@ -87,9 +87,14 @@ class Logger:
             self.handle_exception(e)
 
     # TODO: v1.7.0: remove function (deprecated since 1.6.0)
-    def set_verbose(self, verbose):
+    def set_verbose(self, verbose, is_verbose):
         """Deprecated. Use the property 'verbose' instead."""
         self.verbose = verbose
+        if is_verbose:
+            if verbose:
+                self.debug("Fileloghelper now in verbose mode.")
+            else:
+                self.debug("Fileloghelper no longer in verbose mode.")
         try:
             raise DeprecationWarning(
                 "set_verbose() deprecated. Use the property 'verbose' instead.")
