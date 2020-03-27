@@ -2,7 +2,7 @@ import datetime
 import platform
 import sys
 
-_VERSION = "1.5.1"
+_VERSION = "1.6.0"
 
 
 class col:
@@ -32,12 +32,34 @@ class Logger:
         self.autosave = autosave
         self.filename = filename
         self._lines = []
-        self.set_context(context)
-        self.set_verbose(verbose, False)
+        self.context = context
+        self.verbose = verbose
         self._progress: Progress = None
 
-    def set_context(self, context):
-        """specifies context which will be added to all outputs (file & terminal) in front"""
+    @property
+    def autosave(self):
+        return self._is_autosave
+
+    @property
+    def context(self):
+        return self._context
+
+    @property
+    def verbose(self):
+        return self._verbose
+
+    @autosave.setter
+    def autosave(self, autosave):
+        if type(autosave) == bool:
+            self._is_autosave = autosave
+        else:
+            raise TypeError("Expected autosave to be of type bool.")
+
+    @context.setter
+    def context(self, context):
+        """specifies context which will be added to all outputs (file & terminal) in front."""
+        if type(context) != str:
+            raise TypeError("Context expected to be of type str.")
         if not "[" in context and not "] " in context:
             if (context == "" or context == " "):
                 self._context = ""
@@ -46,22 +68,36 @@ class Logger:
         else:
             self._context = context
 
-    def set_verbose(self, set_verbose: bool, verbose=True):
-        """set verbose mode to 'set_verbose'. If 'verbose', also log the change."""
+    @verbose.setter
+    def verbose(self, set_verbose: bool):
+        """set verbose mode to 'set_verbose'."""
         if type(set_verbose) == bool:
             self._verbose = set_verbose
-            if verbose:
-                if set_verbose:
-                    self.debug("Fileloghelper now in verbose mode")
-                else:
-                    self.debug("Fileloghelper no longer in verbose mode")
         else:
-            e = TypeError("'verbose' argument expected to be of type bool")
-            self.show_error(e)
-            raise e
+            raise TypeError("'verbose' argument expected to be of type bool")
+
+    # TODO: v1.7.0: remove function (deprecated since 1.6.0)
+    def set_context(self, context):
+        """Deprecated. Use the property 'context' instead."""
+        self.context = context
+        try:
+            raise DeprecationWarning(
+                "set_context() deprecated. Use the property 'context' instead.")
+        except Exception as e:
+            self.handle_exception(e)
+
+    # TODO: v1.7.0: remove function (deprecated since 1.6.0)
+    def set_verbose(self, verbose):
+        """Deprecated. Use the property 'verbose' instead."""
+        self.verbose = verbose
+        try:
+            raise DeprecationWarning(
+                "set_verbose() deprecated. Use the property 'verbose' instead.")
+        except Exception as e:
+            self.handle_exception(e)
 
     def save(self):
-        """save file under default/at declaration specified filename"""
+        """save file under default/at declaration specified filename."""
         self.file = open(self.filename, "w")
         self.file.writelines(self._lines)
         self.file.close()
@@ -184,8 +220,7 @@ class Logger:
         self._lines.append(string)
         self._autosave()
 
-    # TODO v1.6: remove version argument
-    def header(self, sys_stat=False, date=False, description="", display=0, fileloghelper_version=True, program_version=None, version=None):
+    def header(self, sys_stat=False, date=False, description="", display=0, fileloghelper_version=True, program_version=None):
         """
         Display options:
 
@@ -274,13 +309,6 @@ class Logger:
                 self.plain(date_string, very_plain=True, display=True)
             if description:
                 self.plain(description, very_plain=True, display=True)
-        if version != None:
-            fileloghelper_version = version
-            try:
-                raise DeprecationWarning(
-                    "fileloghelper.Logger().header()-argument 'version' is deprecated and will be removed in v1.6. Please use 'fileloghelper_version' instead.")
-            except DeprecationWarning as e:
-                self.handle_exception(e)
         if program_version != None:
             if type(program_version) == str or type(program_version) == int or type(program_version) == float:
                 self.plain("version: " + str(program_version),
