@@ -2,7 +2,7 @@ import datetime
 import platform
 import sys
 
-_VERSION = "1.6.1"
+_VERSION = "1.6.2"
 
 
 class col:
@@ -458,6 +458,23 @@ class VarSet:
         for varname in self.variables:
             histories[varname] = self.variables[varname].get_history()
         return histories
+
+    def history_to_csv(self, filename: str):
+        csv = ""
+        for k in self.variables.keys():
+            csv += str(k) + ","
+        csv = csv[:-1] + "\n"
+        l = []
+        for k, v in self.variables.items():
+            l.append(v.get_history())
+        values = zip(*l)
+        for row in values:
+            for v in row:
+                csv += str(v) + ","
+            csv = csv[:-1]
+            csv += "\n"
+        with open(filename, "w") as f:
+            f.write(csv)
 
     def __nonzero__(self):
         return self.variables
