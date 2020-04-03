@@ -2,7 +2,7 @@ import datetime
 import platform
 import sys
 
-_VERSION = "1.6.3"
+_VERSION = "1.6.4"
 
 
 class col:
@@ -414,12 +414,11 @@ class VariableObserver:
             self._history = None
 
     def set_value(self, new_value):
-        if self.value != new_value:
-            self.pre_change_func(self.value)
-            self.value = new_value
-            if self._history != None:
-                self._history.append(new_value)
-            self.post_change_func(self.value)
+        self.pre_change_func(self.value)
+        self.value = new_value
+        if self._history != None:
+            self._history.append(new_value)
+        self.post_change_func(self.value)
 
     def get_history(self):
         return self._history
