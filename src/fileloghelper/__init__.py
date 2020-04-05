@@ -2,7 +2,7 @@ import datetime
 import platform
 import sys
 
-_VERSION = "1.6.4"
+_VERSION = "1.6.5"
 
 
 class col:
@@ -443,6 +443,24 @@ class VarSet:
 
     def set(self, varname, value):
         self.variables[varname].set_value(value)
+
+    @property
+    def head(self):
+        return list(self.variables.keys())
+
+    @property
+    def keys(self):
+        return self.head
+
+    @property
+    def values(self):
+        return list(self.variables.values())
+
+    def print_head(self, delimiter=","):
+        s = ""
+        for i in self.head:
+            s += i + delimiter + " "
+        print(s[:-2])
 
     def print_variables(self):
         out = ""
