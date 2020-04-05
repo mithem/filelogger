@@ -2,7 +2,7 @@ import datetime
 import platform
 import sys
 
-_VERSION = "1.6.5"
+_VERSION = "1.6.6"
 
 
 class col:
@@ -507,3 +507,6 @@ class VarSet:
 
     def __str__(self):
         return str(self.variables)
+
+    def __dict__(self):
+        return self.variables
