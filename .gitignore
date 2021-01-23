@@ -6,3 +6,4 @@ Pipfile
 Pipfile.lock
 log.txt
 test.py
+.vscode

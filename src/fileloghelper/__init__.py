@@ -2,7 +2,7 @@ import datetime
 import platform
 import sys
 
-_VERSION = "1.6.6"
+_VERSION = "1.7.0"
 
 
 class col:
@@ -76,31 +76,6 @@ class Logger:
         else:
             raise TypeError("'verbose' argument expected to be of type bool")
 
-    # TODO: v1.7.0: remove function (deprecated since 1.6.0)
-    def set_context(self, context):
-        """Deprecated. Use the property 'context' instead."""
-        self.context = context
-        try:
-            raise DeprecationWarning(
-                "set_context() deprecated. Use the property 'context' instead.")
-        except Exception as e:
-            self.handle_exception(e)
-
-    # TODO: v1.7.0: remove function (deprecated since 1.6.0)
-    def set_verbose(self, verbose, is_verbose):
-        """Deprecated. Use the property 'verbose' instead."""
-        self.verbose = verbose
-        if is_verbose:
-            if verbose:
-                self.debug("Fileloghelper now in verbose mode.")
-            else:
-                self.debug("Fileloghelper no longer in verbose mode.")
-        try:
-            raise DeprecationWarning(
-                "set_verbose() deprecated. Use the property 'verbose' instead.")
-        except Exception as e:
-            self.handle_exception(e)
-
     def save(self):
         """save file under default/at declaration specified filename."""
         self.file = open(self.filename, "w")
@@ -144,6 +119,15 @@ class Logger:
         string += self._timestamp_now_() + " " + text
         return string
 
+    def _get_info(self, text, display=False):
+        if display:
+            print(col.OKBLUE + self._context +
+                  self._timestamp_now_() + col.ENDC + " " + text)
+        string = self._context
+        string += "[INFO] " if self._verbose else ""
+        string += self._timestamp_now_() + " " + text
+        return string
+
     def _get_warning_(self, text, display=True, extra_context=""):
         if display:
             print(col.WARNING + self._context + self._timestamp_now_() +
@@ -169,13 +153,22 @@ class Logger:
         return string
 
     def success(self, text, display=True):
+        """writes text to file and optionally with green indication in console(if display == True)"""
         string = self._get_success_(str(text), display)
         string += "\n"
         self._lines.append(string)
         self._autosave()
 
     def debug(self, text, display=False):
+        """writes text to file and optionally with blue indication in console(if display == True)"""
         string = self._get_debug_(str(text), display)
+        string += "\n"
+        self._lines.append(string)
+        self._autosave()
+
+    def info(self, text, display=False):
+        """writes text to file and optionally with blue indication in console(if display == True)"""
+        string = self._get_info(str(text), display)
         string += "\n"
         self._lines.append(string)
         self._autosave()
