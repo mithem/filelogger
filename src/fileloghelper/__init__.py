@@ -1,8 +1,9 @@
 import datetime
 import platform
 import sys
+import os
 
-_VERSION = "1.7.0"
+_VERSION = "1.7.1"
 
 
 class col:
@@ -78,7 +79,15 @@ class Logger:
 
     def save(self):
         """save file under default/at declaration specified filename."""
-        self.file = open(self.filename, "w")
+        dirname = os.path.dirname(self.filename)
+        plus_mode = False
+        if dirname == "":
+            if not os.path.isfile(self.filename):
+                plus_mode = True
+        elif not os.path.exists(dirname):
+            os.makedirs(dirname)
+
+        self.file = open(self.filename, "w" + ("+" if plus_mode else ""))
         self.file.writelines(self._lines)
         self.file.close()
 
